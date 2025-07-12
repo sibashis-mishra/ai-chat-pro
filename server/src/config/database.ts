@@ -39,6 +39,7 @@ export class DatabaseConnection {
   }
 
   async connect(): Promise<void> {
+    console.log('🔍 Connecting to MongoDB:', databaseConfig.uri);
     if (this.isConnected && this.client) {
       return;
     }
