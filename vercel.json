@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd client && yarn build",
+  "buildCommand": "chmod +x build.sh && ./build.sh",
   "outputDirectory": "client/dist",
   "functions": {
     "server/src/index.ts": {
