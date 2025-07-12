@@ -9,6 +9,9 @@ export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   DEBUG: process.env.DEBUG === 'true',
   
+  // CORS Configuration
+  CLIENT_URL: process.env.CLIENT_URL,
+  
   // JWT Configuration
   JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
   
