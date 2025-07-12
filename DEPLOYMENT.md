@@ -38,8 +38,8 @@ Since your project has both client and server, you'll need to configure it as a 
 
 1. **Framework Preset**: Select "Other" (since we have custom build configuration)
 2. **Root Directory**: Leave as `/` (root)
-3. **Build Command**: Leave empty (Vercel will use the build.sh script)
-4. **Output Directory**: `client/dist`
+3. **Build Command**: Leave empty (Vercel will auto-detect from vercel.json)
+4. **Output Directory**: Leave empty (Vercel will auto-detect from vercel.json)
 
 ### 2.3 Environment Variables
 Add the following environment variables in Vercel:
@@ -102,9 +102,9 @@ After deployment, update the API URL in your client:
    - Ensure TypeScript compilation works locally
    - Verify environment variables are set
    - If you get "cd: client: No such file or directory" error:
-     - Make sure the build.sh script is executable
      - Verify the client directory exists in your repository
-     - Check that the build script has proper permissions
+     - Check that the vercel.json configuration is correct
+     - Try using the "builds" configuration instead of "buildCommand"
 
 2. **API Errors**:
    - Check MongoDB connection
