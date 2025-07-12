@@ -1,0 +1,174 @@
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #343541;
+  transition: margin-left 0.3s ease;
+  overflow: hidden; /* Prevent main area scrolling */
+  position: relative; /* For absolute positioning of scroll button */
+  height: 100%; /* Ensure full height */
+}
+
+.chat-main.sidebar-open {
+}
+
+.messages-container {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto; /* Only messages should scroll */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-behavior: smooth;
+  height: 100%; /* Force flex child to take available space */
+}
+
+.welcome-message {
+  text-align: center;
+  padding: 2rem;
+  color: #8e8ea0;
+  max-width: 37.5rem; /* 600px */
+  margin: 0 auto;
+}
+
+.welcome-message h2 {
+  color: #ececf1;
+  margin-bottom: 1rem;
+}
+
+.welcome-message ul {
+  text-align: left;
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.welcome-message li {
+  margin-bottom: 0.5rem;
+}
+
+.scroll-to-bottom-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #40414f;
+  color: #ececf1;
+  border: 1px solid #4a4b53;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: normal;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInUp 0.3s ease;
+  line-height: 1;
+}
+
+.scroll-to-bottom-btn:hover {
+  background: #565869;
+  border-color: #667eea;
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.375rem 1rem rgba(0, 0, 0, 0.4);
+}
+
+.scroll-to-bottom-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar Styling */
+.messages-container::-webkit-scrollbar {
+  width: 0.5rem; /* 8px */
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #2a2b32;
+  border-radius: 0.25rem;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #4a4b53;
+  border-radius: 0.25rem;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #565869;
+}
+
+@media (max-width: 48rem) {
+  .chat-main {
+    margin-left: 0; /* No margin on mobile */
+    flex: 1;
+  }
+
+  .chat-main.sidebar-open {
+    margin-left: 0; /* No margin on mobile even when sidebar is open */
+  }
+
+  .mobile-bottom-spacer {
+    height: 5rem;
+    width: 100%;
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 49rem) {
+  .chat-main {
+  }
+  
+  .chat-main.sidebar-open {
+  }
+
+  .messages-container {
+    padding: 0.5rem;
+  }
+
+  .welcome-message {
+    padding: 1rem;
+  }
+
+  .scroll-to-bottom-btn {
+    bottom: 5.5rem; /* Above the fixed input */
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .messages-container {
+    padding-bottom: 5rem; /* Space for fixed input */
+    height: 0; /* Force flex child to take available space */
+  }
+
+  .chat-main {
+    height: calc(100vh - 8rem); /* Account for header and fixed input */
+    position: relative;
+    overflow: hidden; /* Prevent main area scrolling */
+  }
+
+  .scroll-to-bottom-btn {
+    bottom: 4.5rem; /* Above the fixed input */
+    right: 0.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.8rem;
+  }
+}

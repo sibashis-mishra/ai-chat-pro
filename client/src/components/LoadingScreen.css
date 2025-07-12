@@ -1,0 +1,28 @@
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: white;
+}
+
+.loading-spinner {
+  width: 3.125rem; /* 50px */
+  height: 3.125rem; /* 50px */
+  border: 0.1875rem solid rgba(255, 255, 255, 0.3); /* 3px */
+  border-top: 0.1875rem solid white; /* 3px */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-screen p {
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+} 
