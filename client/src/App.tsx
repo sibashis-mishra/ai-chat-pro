@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import './App.css';
 import AuthForm from './components/AuthForm';
 import Header from './components/Header';
@@ -7,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
 import LoadingScreen from './components/LoadingScreen';
 import type { Message, ChatResponse, ChatHistoryItem, User } from './types/index';
+import { get, post, del } from './utils/api';
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -27,9 +27,6 @@ function App() {
   const [authError, setAuthError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-    (import.meta.env.PROD ? window.location.origin : 'http://localhost:3001');
-    console.log('🔍 API_BASE_URL:', API_BASE_URL);
 
 
 
@@ -57,9 +54,7 @@ function App() {
   const checkAuthStatus = async (token: string) => {
     try {
       // Get user info from usage endpoint since /api/auth/me doesn't exist in new API
-      const response = await axios.get(`${API_BASE_URL}/api/chat/usage`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await get('/api/chat/usage', true);
       
       // Get user info from the token payload or create a minimal user object
       const tokenPayload = JSON.parse(atob(token.split('.')[1]));
@@ -75,7 +70,7 @@ function App() {
       setUser(user);
       setIsAuthenticated(true);
       setShowAuth(false);
-      loadChatHistory(token);
+      loadChatHistory();
     } catch (error) {
       localStorage.removeItem('authToken');
       setIsLoadingHistory(false);
@@ -90,10 +85,10 @@ function App() {
       const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
       console.log('🔍 Auth request:', { endpoint, username: authEmail, mode: authMode });
       
-      const response = await axios.post(`${API_BASE_URL}${endpoint}`, {
+      const response = await post(endpoint, {
         username: authEmail, // Server expects 'username' field
         password: authPassword
-      });
+      }, false);
 
       console.log('🔍 Auth response:', response.data);
 
@@ -103,7 +98,7 @@ function App() {
         setUser(user);
         setIsAuthenticated(true);
         setShowAuth(false);
-        loadChatHistory(token);
+        loadChatHistory();
       } else {
         setAuthError(response.data.error || 'Authentication failed');
       }
@@ -122,7 +117,7 @@ function App() {
   };
 
   // Generate session ID and load history on component mount
-  const loadChatHistory = async (token: string) => {
+  const loadChatHistory = async () => {
     const generateSessionId = () => {
       return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     };
@@ -137,11 +132,7 @@ function App() {
       setSessionId(currentSessionId);
 
       // Load chat history from database
-      const response = await axios.get(`${API_BASE_URL}/api/chat/history`, {
-        headers: { 
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await get('/api/chat/history', true);
 
       if (response.data.success && response.data.messages && response.data.messages.length > 0) {
         const historyMessages: Message[] = response.data.messages
@@ -207,14 +198,9 @@ function App() {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('authToken');
-      const response = await axios.post<ChatResponse>(`${API_BASE_URL}/api/chat/message`, {
+      const response = await post('/api/chat/message', {
         message: userMessage
-      }, {
-        headers: { 
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      }, true);
 
       if (response.data.success) {
         addMessage(response.data.response, 'ai', chatMode);
@@ -256,10 +242,7 @@ function App() {
     if (!user) return;
     
     try {
-      const token = localStorage.getItem('authToken');
-      await axios.delete(`${API_BASE_URL}/api/chat/history`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await del('/api/chat/history', true);
       
       setMessages([]);
       setStreamingMessage('');
@@ -276,10 +259,7 @@ function App() {
     if (!user) return;
     
     try {
-      const token = localStorage.getItem('authToken');
-      const response = await axios.get(`${API_BASE_URL}/api/chat/usage`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await get('/api/chat/usage', true);
       
       if (response.data.success) {
         setUser({
