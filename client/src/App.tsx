@@ -27,7 +27,8 @@ function App() {
   const [authError, setAuthError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const API_BASE_URL = 'http://localhost:3001';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+    (import.meta.env.PROD ? window.location.origin : 'http://localhost:3001');
 
 
 

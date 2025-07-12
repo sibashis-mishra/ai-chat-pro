@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "buildCommand": "cd client && yarn build",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "server/src/index.ts": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/server/src/index.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+} 

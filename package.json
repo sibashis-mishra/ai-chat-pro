@@ -1,0 +1,22 @@
+{
+  "name": "ai-chat-pro",
+  "version": "1.0.0",
+  "description": "AI Chat Pro - Full Stack Application",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"cd server && yarn dev\" \"cd client && yarn dev\"",
+    "build": "cd client && yarn build",
+    "start": "cd server && yarn start",
+    "install:all": "yarn install && cd client && yarn install && cd ../server && yarn install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
