@@ -87,6 +87,9 @@ export const databaseConfig: DatabaseConfig = {
   }
 };
 
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
+
 export class DatabaseConnection {
   private static instance: DatabaseConnection;
   private client: MongoClient | null = null;
@@ -103,8 +106,15 @@ export class DatabaseConnection {
   }
 
   async connect(): Promise<void> {
-    console.log('🔍 Connecting to MongoDB:', databaseConfig.uri);
     if (this.isConnected && this.client) {
+      return;
+    }
+
+    if (cachedClient && cachedDb) {
+      this.client = cachedClient;
+      this.db = cachedDb;
+      this.isConnected = true;
+      console.log('♻️  Reusing cached MongoDB connection');
       return;
     }
 
@@ -118,7 +128,6 @@ export class DatabaseConnection {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`🔄 Connection attempt ${attempt}/${maxRetries}`);
-        
         this.client = new MongoClient(databaseConfig.uri, databaseConfig.options);
         
         // Add connection event listeners for better debugging
@@ -138,6 +147,8 @@ export class DatabaseConnection {
         await this.client.connect();
         this.db = this.client.db(databaseConfig.databaseName);
         this.isConnected = true;
+        cachedClient = this.client;
+        cachedDb = this.db;
         
         console.log(`✅ Connected to MongoDB: ${databaseConfig.databaseName}`);
         

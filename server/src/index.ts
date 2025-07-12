@@ -35,6 +35,20 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
+// Middleware: Only connect to DB for non-OPTIONS requests
+app.use(async (req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return next(); // Skip DB connection for preflight
+  }
+  try {
+    await dbService.connect();
+    next();
+  } catch (err) {
+    console.error('DB connection error:', err);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
+
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
