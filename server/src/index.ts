@@ -124,7 +124,7 @@ app.get('/api/history', async (req, res) => {
   }
 });
 
-// Initialize database and start server
+// Initialize database and start server (for local development)
 async function startServer() {
   try {
     await dbService.connect();
@@ -176,8 +176,31 @@ process.on('SIGTERM', async () => {
   }
 });
 
-// Start the server
-startServer().catch((error) => {
-  console.error('❌ Failed to start server:', error);
-  process.exit(1);
-}); 
+// Initialize database connection for serverless environment
+async function initializeDatabase() {
+  try {
+    await dbService.connect();
+    
+    // Ensure special user limits are set
+    const authService = new AuthService();
+    await authService.ensureSpecialUserLimits();
+    
+    console.log('✅ Database initialized for serverless environment');
+  } catch (error) {
+    console.error('❌ Failed to initialize database:', error);
+  }
+}
+
+// Initialize database on module load (for serverless)
+initializeDatabase();
+
+// Start the server only in development environment
+if (process.env.NODE_ENV !== 'production') {
+  startServer().catch((error) => {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  });
+}
+
+// Export the app for Vercel serverless functions
+export default app; 
