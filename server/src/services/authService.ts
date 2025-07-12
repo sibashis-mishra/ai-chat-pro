@@ -82,7 +82,7 @@ export class AuthService {
       }
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user.id }, config.JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign({ userId: user.id, email: user.email }, config.JWT_SECRET, { expiresIn: '7d' });
       console.log('✅ Login successful for user:', username);
 
       return { success: true, token, user };

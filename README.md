@@ -136,17 +136,17 @@ A modern AI chat application with user authentication, request limits, and multi
 
 Copy `server/env.example` to `server/.env` and configure the following variables:
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `OPENAI_API_KEY` | OpenAI API key | `undefined` (uses mock) | No |
-| `JWT_SECRET` | JWT signing secret | `your-secret-key` | Yes |
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/ai-chat-pro` | Yes |
-| `MONGODB_DATABASE` | MongoDB database name | `ai-chat-pro` | No |
-| `MAX_TOKENS_PER_REQUEST` | Maximum tokens per AI response | `150` | No |
-| `TEMPERATURE` | AI response randomness | `0.3` | No |
-| `RATE_LIMIT_PER_MINUTE` | Rate limit per IP | `10` | No |
-| `PORT` | Server port | `3001` | No |
-| `NODE_ENV` | Environment mode | `development` | No |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OPENAI_API_KEY` | OpenAI API key | `undefined` (uses mock) |
+| `JWT_SECRET` | JWT signing secret | `your-secret-key` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017` |
+| `MONGODB_DATABASE` | MongoDB database name | `ai-chat-pro` |
+| `MAX_TOKENS_PER_REQUEST` | Maximum tokens per AI response | `150` |
+| `TEMPERATURE` | AI response randomness | `0.3` |
+| `RATE_LIMIT_PER_MINUTE` | Rate limit per IP | `10` |
+| `PORT` | Server port | `3001` |
+| `NODE_ENV` | Environment mode | `development` |
 
 ### AI Model Configuration
 

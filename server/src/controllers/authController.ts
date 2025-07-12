@@ -14,12 +14,11 @@ export class AuthController {
         return res.status(400).json({ error: 'Username and password are required' });
       }
 
-      // Check rate limiting
-      const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
-      const rateLimitKey = `login:${clientIp}`;
+      // Check rate limiting - use username instead of IP to be user-specific
+      const rateLimitKey = `login:${username}`;
       
       if (!rateLimitService.checkRateLimit(rateLimitKey, 5, 15 * 60 * 1000)) { // 5 attempts per 15 minutes
-        return res.status(429).json({ error: 'Too many login attempts. Please try again later.' });
+        return res.status(429).json({ error: 'Too many login attempts for this account. Please try again later.' });
       }
 
       const result = await authService.login(username, password);
@@ -51,12 +50,11 @@ export class AuthController {
         return res.status(400).json({ error: 'Password must be at least 6 characters long' });
       }
 
-      // Check rate limiting
-      const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
-      const rateLimitKey = `register:${clientIp}`;
+      // Check rate limiting - use username instead of IP to be user-specific
+      const rateLimitKey = `register:${username}`;
       
       if (!rateLimitService.checkRateLimit(rateLimitKey, 3, 60 * 60 * 1000)) { // 3 attempts per hour
-        return res.status(429).json({ error: 'Too many registration attempts. Please try again later.' });
+        return res.status(429).json({ error: 'Too many registration attempts for this email. Please try again later.' });
       }
 
       const result = await authService.register(username, password);

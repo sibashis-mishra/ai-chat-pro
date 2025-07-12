@@ -7,12 +7,16 @@ import ChatArea from './components/ChatArea';
 import LoadingScreen from './components/LoadingScreen';
 import type { Message, ChatResponse, ChatHistoryItem, User } from './types/index';
 import { get, post, del } from './utils/api';
+import { Spin } from 'antd';
+import 'antd/dist/reset.css';
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [systemPrompt, setSystemPrompt] = useState('You are a helpful AI assistant.');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [chatMode, setChatMode] = useState<'normal' | 'chain' | 'stream'>('normal');
   const [streamingMessage, setStreamingMessage] = useState('');
   const [isStreaming, ] = useState(false);
@@ -52,6 +56,7 @@ function App() {
   }, [user]);
 
   const checkAuthStatus = async (token: string) => {
+    setIsAuthLoading(true);
     try {
       // Get user info from usage endpoint since /api/auth/me doesn't exist in new API
       const response = await get('/api/chat/usage', true);
@@ -74,12 +79,15 @@ function App() {
     } catch (error) {
       localStorage.removeItem('authToken');
       setIsLoadingHistory(false);
+    } finally {
+      setIsAuthLoading(false);
     }
   };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
+    setIsAuthLoading(true);
 
     try {
       const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
@@ -105,6 +113,8 @@ function App() {
     } catch (error: any) {
       console.error('🔍 Auth error:', error.response?.data || error.message);
       setAuthError(error.response?.data?.error || 'Authentication failed');
+    } finally {
+      setIsAuthLoading(false);
     }
   };
 
@@ -118,6 +128,7 @@ function App() {
 
   // Generate session ID and load history on component mount
   const loadChatHistory = async () => {
+    setIsHistoryLoading(true);
     const generateSessionId = () => {
       return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     };
@@ -168,6 +179,7 @@ function App() {
       console.log('No chat history found or database not available');
     } finally {
       setIsLoadingHistory(false);
+      setIsHistoryLoading(false);
     }
   };
 
@@ -274,12 +286,32 @@ function App() {
   };
 
   if (isLoadingHistory) {
-    return <LoadingScreen />;
+    return (
+      <div className="app" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" tip="Loading..." />
+      </div>
+    );
   }
 
   if (showAuth) {
     return (
       <div className="app">
+        {isAuthLoading && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(255,255,255,0.5)',
+            zIndex: 9999,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            <Spin size="large" tip="Authenticating..." />
+          </div>
+        )}
         <AuthForm
           authMode={authMode}
           authEmail={authEmail}
@@ -295,7 +327,23 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className="app" style={{ position: 'relative' }}>
+      {(isAuthLoading || isHistoryLoading) && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(255,255,255,0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Spin size="large" tip={isAuthLoading ? "Authenticating..." : "Loading chat history..."} />
+        </div>
+      )}
       <Header user={user} onLogout={logout} />
       
       <div className="chat-container">
